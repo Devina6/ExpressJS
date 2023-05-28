@@ -1,27 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-			<meta charset="utf-8">
-				<meta name="viewport" content="width=device-width, initial-scale=1.0">
-				<title></title>
-				<link rel="stylesheet" href="">
-</head>
-
+   <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+   </head>
 <body>
-	<header>
-		<nav>
-			<ul>
-				<li><a href = "/">Shop</a></li>
-				<li><a href = "/add-product">Add Product</a></li>
-			</ul>
-		</nav>
-	</header>
-	<main>
-		<form action="add-product" method="POST">
-		<input type ="text" name="title">
-      <button type="submit">Add Product</button>
-		</form>
-	</main>
-				<script src=""></script>
+       <nav class="navbar navbar-expand-lg bg-body-tertiary">
+           <div class="container-fluid">
+               <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/">SHOP</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="/admin/add-product">ADD Products</a>
+                        </li>
+                    </ul>
+                </div>
+		  </div>
+	</nav>
+	<div id="main" class="card card-body">
+        <div class="row g-2">
+            <form action="/admin/add-product" method="POST">
+                <div class="col-md">
+                    <div class="form-floating">
+                        <label for="floatingInputGrid">Title</label>
+                        <input type="text" class="form-control" id="title" name="title">
+                        <br>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>
