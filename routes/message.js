@@ -1,15 +1,9 @@
-const express = require('express');
-
 const router = express.Router();
-
-const path = require('path');
-
-const rootDir = require('../helpers/path');
+const express = require('express');
+const contactController = require('../controllers/contact');
 
 
-router.get('/message',(req,res,next)=>{
-	res.sendFile(path.join(rootDir,'views','message.html'));
-});
+router.get('/message',contactController.getMessage);
 
 
 module.exports = router;
