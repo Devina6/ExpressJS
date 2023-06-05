@@ -25,18 +25,39 @@
                 </div>
 		  </div>
 	</nav>
-	<div id="main" class="card card-body">
-        <div class="row g-2">
-            <form action="/admin/add-product" method="POST">
-                <div class="col-md">
-                    <div class="form-floating">
-                        <label for="floatingInputGrid">Title</label>
-                        <input type="text" class="form-control" id="title" name="title">
-                        <br>
-                        <button type="submit" class="btn btn-primary">Add Product</button>
+	<br><br><h4>Add NEW Products</h4><br>
+	<div class="container">
+        <div id="main">
+            <div id="main" class="card card-body">
+               <form action="/admin/add-product" method="POST">
+                   <div class="row g-2">
+                       <div class="col-md">
+                           <div class="form-floating">
+                               <label for="floatingInputGrid">Title</label>
+                               <input type="text" class="form-control" id="title" name="title">
+                           </div>
+                        </div>
+                        <div class="col-md">
+                           <div class="form-floating">
+                               <label for="floatingInputGrid">Price</label>
+                               <input type="number" class="form-control" id="price" name="price">
+                           </div>
+                        </div>
+                        <div class="col-md">
+                           <div class="form-floating">
+                               <label for="floatingInputGrid">Description</label>
+                               <input type="text" class="form-control" id="description" name="description">
+                           </div>
+                        </div>
                     </div>
-                </div>
-            </form>
+                    <div class="row g-2">
+                       <div class="col">
+                       <br><br>
+                        <button type="submit" class="btn btn-primary">Add Product</button>
+                        </div>  
+                   </div>
+                </form>
+            </div>
         </div>
     </div>
 </body>
