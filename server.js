@@ -1,5 +1,5 @@
-const app = express();
 const express = require('express');
+const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
 const db = require('./helpers/database');
@@ -11,7 +11,6 @@ const shopRoutes = require('./routes/shop');
 const contactRoutes = require('./routes/contactus');
 const messageRoutes = require('./routes/message');
 
-
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(express.static(path.join(__dirname,'public')));
 
@@ -21,6 +20,5 @@ app.use('/contactus',contactRoutes);
 app.use('/message',messageRoutes);
 
 app.use(controller404.get404);
-
 
 app.listen(4000);
