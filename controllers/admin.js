@@ -1,12 +1,8 @@
 const path = require('path');
 const rootDir = require('../helpers/path');
 const Product = require("../models/product");
+const fs = require('fs');
 
-//const { JSDOM } = require("jsdom");
-//const fs = require('fs');
-//const html = fs.readFileSync(path.join(rootDir,'views','shop.html'), 'utf8');
-//const dom = new JSDOM(html,{runScripts:'dangerously'});
-//const { document, window} = dom.window;
 
 
 exports.getAddProduct = (req,res,next)=>{
@@ -28,17 +24,35 @@ exports.postAddProduct = (req,res,next)=>{
 }
 
 exports.getProducts = (req,res,next)=>{
-    Product
-         .fetchAll()
-         .then(data =>{
-            for (var i=0;i<data[0].length;i++){
-                printData(data[0][i],data[0][i].id)
-            }
-     });
-    res.sendFile(path.join(rootDir,'views','shop.html'));
-  //const htmlWithDOMChanges = dom.serialize();
-  //res.send(htmlWithDOMChanges);
-    
+    Product.fetchAll()
+         .then(products => {
+            fs.readFile(path.join(rootDir, 'views', 'shop.html'), 'utf8', (err, data) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Internal Server Error');
+                } else {
+                    const html = data.replace('<!--TABLE_BODY-->', generateTableBody(products));
+                    res.send(html);
+                }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).send('Internal Server Error');
+        });
 }
 
+function generateTableBody(products) {
+    let html = '';
+    products[0].forEach(product => {
+        html += `
+            <tr>
+                <td>${product.title}</td>
+                <td>${product.price}</td>
+                <td>${product.description}</td>
+            </tr>
+        `;
+    });
 
+    return html;
+}
