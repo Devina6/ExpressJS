@@ -6,8 +6,26 @@ const fs = require('fs');
 
 
 exports.getAddProduct = (req,res,next)=>{
-	res.sendFile(path.join(rootDir,'views','add-product.html'));
-}
+    fs.readFile(path.join(rootDir, 'views', 'include', 'navigation.html'), 'utf8', (err, navigationContent) => {
+        if (err) {
+          console.error('Error reading navigation.html', err);
+          return next();
+        }
+    
+        fs.readFile(path.join(rootDir, 'views', 'admin', 'add-product.html'), 'utf8', (err, addProductContent) => {
+          if (err) {
+            console.error('Error reading add-product.html', err);
+            return next();
+          }
+    
+          // Combine the navigation and add-product contents
+          const combinedContent = addProductContent.replace('<!-- INCLUDE_NAVIGATION -->', navigationContent);
+    
+          // Send the combined content as the response
+          res.send(combinedContent);
+        });
+      });
+    }
 
 exports.postAddProduct = (req,res,next)=>{
     const title = req.body.title;
