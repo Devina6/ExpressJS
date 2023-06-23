@@ -1,18 +1,22 @@
-const db = require('../helpers/database');
+const Sequelize = require('sequelize');
+const sequelize = require('../helpers/database');
 
-class Product {
-    constructor(title,price,description){
-        this.title = title;
-        this.price = price;
-        this.description = description;
+const Product = sequelize.define('product',{
+    id:{
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        allowNull:false,
+        primaryKey:true
+    },
+    title: Sequelize.STRING,
+    price:{
+        type: Sequelize.DOUBLE,
+        allowNull:false
+    },
+    description: {
+        type: Sequelize.STRING,
+        allowNull:false
     }
-    save(){
-        return db.execute('INSERT INTO products(title,price,description)VALUES(?,?,?)',[this.title,this.price,this.description])
-    }
-    static fetchAll(){
-       return db.execute('SELECT * FROM products');
-    }
-}
-
+});
 
 module.exports = Product;
