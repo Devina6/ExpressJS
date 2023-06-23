@@ -2,7 +2,7 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const path = require('path');
-const db = require('./helpers/database');
+const sequelize = require('./helpers/database');
 const controller404 = require('../controllers/404');
 
 
@@ -21,4 +21,9 @@ app.use('/message',messageRoutes);
 
 app.use(controller404.get404);
 
-app.listen(4000);
+sequelize.sync()
+    .then(result=>{
+        //console.log(result);
+        app.listen(4000);
+    })
+    .catch(err=> console.log(err))
