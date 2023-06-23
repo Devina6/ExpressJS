@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const adminController = require('../controllers/admin');
+const shopController = require('../controllers/shop');
 
 
-router.get('/',productsController.getProduct);
+router.get('/',shopController.getProduct);
 
 router.get('/products',shopController.getProducts);
 
