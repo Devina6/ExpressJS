@@ -1,5 +1,7 @@
 # ExpressJS
 
+E-commerce project
+
 1. create folder express 
 2. create new file index.js
 3. create package.json file  //npm init
