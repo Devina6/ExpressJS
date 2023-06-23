@@ -13,18 +13,19 @@ exports.postAddProduct = (req,res,next)=>{
     const title = req.body.title;
     const price = req.body.price;
     const description = req.body.description;
-    const product = new Product(null,title,price,description);
-    product
-        .save()
-        .then(()=>{
-        res.redirect('/');
-    })
-        .catch(err=>console.log(err));
+   Product.create({
+        title:title,
+        price:price,
+        description:description
+    }).then(result=>{
+        //console.log(result);
+        consolelog("Created Product")
+    }).catch(err=>console.log(err))
 	
 }
 
 exports.getProducts = (req,res,next)=>{
-    Product.fetchAll()
+    Product.findAll()
          .then(products => {
             fs.readFile(path.join(rootDir, 'views', 'shop.html'), 'utf8', (err, data) => {
                 if (err) {
