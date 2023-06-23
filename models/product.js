@@ -1,6 +1,4 @@
-const util = require('util');
 const db = require('../helpers/database');
-const query = util.promisify(db.query).bind(db)
 
 class Product {
     constructor(title,price,description){
@@ -12,7 +10,7 @@ class Product {
         return db.execute('INSERT INTO products(title,price,description)VALUES(?,?,?)',[this.title,this.price,this.description])
     }
     static fetchAll(){
-       return db.query('SELECT * FROM products');
+       return db.execute('SELECT * FROM products');
     }
 }
 
