@@ -13,6 +13,7 @@
         <a class="navbar-brand" href="/">Shop</a>
         <a class="nav-link active" aria-current="page" href="/products">Products</a>
         <a class="nav-link active" aria-current="page" href="/cart">Cart</a>
+	<a class="nav-link active" aria-current="page" href="/orders">Orders</a>
         <a class="nav-link active" aria-current="page" href="/admin/add-product">ADD Products</a>
         <a class="nav-link active" aria-current="page" href="/admin/products">Admin Products</a>
         <a class="nav-link active" aria-current="page" href="/contactus/contact">Contact Us</a>
