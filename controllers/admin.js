@@ -45,7 +45,7 @@ exports.postAddProduct = (req,res,next)=>{
 exports.getProducts = (req,res,next)=>{
     Product.findAll()
          .then(products => {
-            fs.readFile(path.join(rootDir, 'views', 'shop.html'), 'utf8', (err, data) => {
+            fs.readFile(path.join(rootDir, 'views', 'admin/products.html'), 'utf8', (err, data) => {
                 if (err) {
                     console.log(err);
                     res.status(500).send('Internal Server Error');
@@ -69,6 +69,10 @@ function generateTableBody(products) {
                 <td>${product.title}</td>
                 <td>${product.price}</td>
                 <td>${product.description}</td>
+		<td><a href="/admin/edit-product" id="edit" class="btn btn-info">Edit</a></td>
+                <td><form action="/admin/delete-product"method="POST>"
+                    <input type="submit" class="btn btn-danger" id="delete">Delete</button>
+                    </form></td>
             </tr>
         `;
     });
