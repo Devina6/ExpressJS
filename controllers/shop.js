@@ -79,6 +79,26 @@ exports.getCart = (req, res, next) => {
         });
 };
 
+exports.getOrders = (req, res, next) => {
+    Product.findAll().then(products => {
+        fs.readFile(path.join(rootDir, 'views', 'shop/orders.html'), 'utf8', (err, data) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Internal Server Error');
+            } else {
+                const html = data.replace('<!--TABLE_BODY-->', generateTableBody(products));
+                res.send(html);
+            }
+        });
+
+    })
+   
+        .catch(err => {
+            console.log(err);
+            res.status(500).send('Internal Server Error');
+        });
+};
+
 exports.getCheckOut = (req, res, next) => {
     Product.findAll().then(products => {
         fs.readFile(path.join(rootDir, 'views', 'shop/checkout.html'), 'utf8', (err, data) => {
