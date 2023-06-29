@@ -72,7 +72,7 @@ function generateTableBody(products) {
 		<td><form action="/admin/edit-product/${product.id}" method="GET">
                     <input type="submit" class="btn btn-info" id="edit" value="Edit">
                     </form></td>
-                <td><form action="/admin/delete-product"method="POST>"
+                <td><form action="/admin/delete-product/${product.id}"method="POST>"
                     <input type="submit" class="btn btn-danger" id="delete">Delete</button>
                     </form></td>
             </tr>
