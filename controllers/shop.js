@@ -1,6 +1,7 @@
 const path = require('path');
 const rootDir = require('../helpers/path');
 const Product = require('../models/product');
+const Cart = require('../models/cart');
 const fs = require('fs');
 
 exports.getProducts = (req, res, next) => {
