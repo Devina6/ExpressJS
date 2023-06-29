@@ -134,3 +134,13 @@ exports.postEditProduct = (req, res, next) => {
     
   };
 
+exports.postDeleteProduct = (req, res, next) => {
+    const prodId = req.params.ID;
+    Product.destroy({where:{id:prodId}})
+        .then(result => {
+            console.log("Deleted Product");
+            res.redirect('/admin/products');
+        })
+        .catch(err=>console.log(err));
+  };
+  
