@@ -39,6 +39,43 @@ function generateTableBody(products) {
     return html;
 }
 
+exports.getProduct = (req,res,next) => {
+    const prodId = req.params.ID;
+    Product.findAll({where:{id:prodId}})
+    .then(products => {
+        fs.readFile(path.join(rootDir, 'views', 'shop/product-detail.html'), 'utf8', (err, data) => {
+            if (err) {
+                console.log(err);
+                res.status(500).send('Internal Server Error');
+            } else {
+                const html = data.replace('<!--TABLE_BODY-->', genTableBody(products));
+                res.send(html);
+            }
+        });
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).send('Internal Server Error');
+    });
+    
+}
+
+function genTableBody(products) {
+    let html = '';
+    products.forEach(product => {
+        html += `
+            <tr>
+                <td>${product.title}</td>
+                <td>${product.price}</td>
+                <td>${product.description}</td>                
+            </tr>
+        `;
+    });
+
+    return html;
+}
+
+
 exports.getIndex = (req, res, next) => {
     Product.findAll().then(products => {
         fs.readFile(path.join(rootDir, 'views', 'shop/index.html'), 'utf8', (err, data) => {
