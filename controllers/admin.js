@@ -34,7 +34,8 @@ exports.postAddProduct = (req,res,next)=>{
    Product.create({
         title:title,
         price:price,
-        description:description
+        description:description,
+	userId:req.user.id
     }).then(result=>{
         //console.log(result);
         consolelog("Created Product")
