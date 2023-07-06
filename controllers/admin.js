@@ -88,10 +88,12 @@ exports.getEditProduct = (req, res, next) => {
         return res.redirect('/');
     }*/
     const prodId = req.params.ProductId;
-    //Product.findById(prodId)
-    Product.findAll({where:{id:prodId}})
+    //Product.findByPk(prodId)
+    req.user.getProducts({where:{id:prodId}})
+    //Product.findAll({where:{id:prodId}})
         .then(products => {
-        if(!products){
+		const product = product[0];
+        if(!product){
             return res.redirect('/');
         }
         fs.readFile(path.join(rootDir, 'views', 'admin/edit-product.html'), 'utf8', (err, data) => {
@@ -99,9 +101,9 @@ exports.getEditProduct = (req, res, next) => {
                 console.log(err);
                 res.status(500).send('Internal Server Error');
             } else {
-                const html = data.replace('<!--TITLE_VALUE-->', products[0].title)
-                           .replace('<!--PRICE_VALUE-->', products[0].price)
-                           .replace('<!--DESCRIPTION_VALUE-->', products[0].description);
+                const html = data.replace('<!--TITLE_VALUE-->', product.title)
+                           .replace('<!--PRICE_VALUE-->', product.price)
+                           .replace('<!--DESCRIPTION_VALUE-->', product.description);
                 res.send(html);
                 }
             });
