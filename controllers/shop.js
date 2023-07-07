@@ -1,7 +1,7 @@
 const path = require('path');
 const rootDir = require('../helpers/path');
 const Product = require('../models/product');
-const Cart = require('../models/cart');
+
 const fs = require('fs');
 
 exports.getProducts = (req, res, next) => {
@@ -11,7 +11,7 @@ exports.getProducts = (req, res, next) => {
                 console.log(err);
                 res.status(500).send('Internal Server Error');
             } else {
-                const html = data.replace('<!--TABLE_BODY-->', generateTableBody(products));
+                const html = data.replace('<!--TABLE_BODY-->', generateProducts(products));
                 res.send(html);
             }
         });
@@ -24,22 +24,6 @@ exports.getProducts = (req, res, next) => {
         });
 };
 
-function generateTableBody(products) {
-    let html = '';
-    products.forEach(product => {
-        html += `
-            <tr>
-                <td>${product.title}</td>
-                <td>${product.price}</td>
-                <td>${product.description}</td>
-                <td><button type="button" class="btn btn-info">Details</button></td>
-            </tr>
-        `;
-    });
-
-    return html;
-}
-
 exports.getProduct = (req,res,next) => {
     const prodId = req.params.ID;
     Product.findAll({where:{id:prodId}})
@@ -49,7 +33,7 @@ exports.getProduct = (req,res,next) => {
                 console.log(err);
                 res.status(500).send('Internal Server Error');
             } else {
-                const html = data.replace('<!--TABLE_BODY-->', genTableBody(products));
+                const html = data.replace('<!--TABLE_BODY-->', generateProduct(products));
                 res.send(html);
             }
         });
@@ -61,14 +45,21 @@ exports.getProduct = (req,res,next) => {
     
 }
 
-function genTableBody(products) {
+function generateProducts(products) {
     let html = '';
     products.forEach(product => {
         html += `
             <tr>
                 <td>${product.title}</td>
                 <td>${product.price}</td>
-                <td>${product.description}</td>                
+                <td>${product.description}</td>
+                <td><form action="/products/${product.id}" method="GET">
+                    <input type="submit" class="btn btn-info" id="details" value="Details">
+                    </form></td>
+                <td><form action="/cart/${product.id}" method="POST">
+                    <input type="submit" class="btn btn-success" id="AddToCart" value="Add to Cart">
+                    </form></td>
+                
             </tr>
         `;
     });
@@ -76,20 +67,38 @@ function genTableBody(products) {
     return html;
 }
 
+function generateProduct(products) {
+    let html = '';
+    products.forEach(product => {
+        html += `
+            <tr>
+                <td>${product.title}</td>
+                <td>${product.price}</td>
+                <td>${product.description}</td> 
+                <td><form action="/cart/${product.id}" method="POST">
+                    <input type="submit" class="btn btn-success" id="AddToCart" value="Add to Cart">
+                    </form></td>               
+            </tr>
+        `;
+    });
+
+    return html;
+}
 
 exports.getIndex = (req, res, next) => {
-    Product.findAll().then(products => {
+    Product.findAll()
+        .then(products => {
         fs.readFile(path.join(rootDir, 'views', 'shop/index.html'), 'utf8', (err, data) => {
             if (err) {
                 console.log(err);
                 res.status(500).send('Internal Server Error');
             } else {
-                const html = data.replace('<!--TABLE_BODY-->', generateTableBody(products));
+                const html = data.replace('<!--TABLE_BODY-->', generateProducts(products));
                 res.send(html);
             }
         });
 
-    })
+        })
    
         .catch(err => {
             console.log(err);
@@ -117,11 +126,11 @@ exports.getCart = (req, res, next) => {
         .catch(err => {
         console.log(err);
         res.status(500).send('Internal Server Error');
-        });    
+        });        
 };
 
 exports.postCart = (req,res,next)=>{
-   const prodId = req.params.productId;
+    const prodId = req.params.productId;
     let fetchedCart;
     let newQuantity = 1;
     req.user.getCart()
@@ -153,26 +162,6 @@ exports.postCart = (req,res,next)=>{
         .catch(err => console.log(err))
 }
 
-exports.getOrders = (req, res, next) => {
-    Product.findAll().then(products => {
-        fs.readFile(path.join(rootDir, 'views', 'shop/orders.html'), 'utf8', (err, data) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send('Internal Server Error');
-            } else {
-                const html = data.replace('<!--TABLE_BODY-->', generateTableBody(products));
-                res.send(html);
-            }
-        });
-
-    })
-   
-        .catch(err => {
-            console.log(err);
-            res.status(500).send('Internal Server Error');
-        });
-};
-
 function generateCart(products) {
     let html = '';
     products.forEach(product => {
@@ -190,22 +179,90 @@ function generateCart(products) {
 
     return html;
 }
-exports.getCheckOut = (req, res, next) => {
-    Product.findAll().then(products => {
-        fs.readFile(path.join(rootDir, 'views', 'shop/checkout.html'), 'utf8', (err, data) => {
-            if (err) {
-                console.log(err);
-                res.status(500).send('Internal Server Error');
-            } else {
-                const html = data.replace('<!--TABLE_BODY-->', generateTableBody(products));
-                res.send(html);
-            }
-        });
 
-    })
-   
+exports.postCartDeleteProduct = (req, res, next) => {
+    const prodId = req.params.productId;
+    req.user
+        .getCart()
+        .then(cart => {
+            return cart.getProducts({where:{id:prodId}})
+        })
+        .then(products => {
+            const product = products[0];
+            return product.cartItem.destroy();
+        })
+        .then(result => {
+            res.redirect('/cart');
+        })
+        .catch(err => console.log(err))    
+    }
+
+exports.postOrder = (req, res, next) => {
+    let fetchedCart;
+    req.user
+        .getCart()
+        .then(cart => {
+            fetchedCart = cart;
+            return cart.getProducts();
+        })
+        .then(products => {
+            return req.user
+                .createOrder()
+                .then(order => {
+                    return order.addProducts(
+                        products.map(product => {
+                            product.orderItem = {quantity:product.cartItem.quantity};
+                            return product;
+                    }))
+                })
+                .catch(err => console.log(err))
+        })
+        .then(result => {
+            return fetchedCart.setProducts(null);
+            
+        })
+        .then (result => {
+            res.redirect('/orders');
+        })
         .catch(err => {
             console.log(err);
             res.status(500).send('Internal Server Error');
         });
 };
+
+exports.getOrder = (req, res, next) => {
+    req.user
+        .getOrders({include:['products']})
+        .then(orders =>{
+            fs.readFile(path.join(rootDir, 'views', 'shop/orders.html'), 'utf8', (err, data) => {
+                if (err) {
+                    console.log(err);
+                    res.status(500).send('Internal Server Error');
+                } else {
+                    const html = data.replace('<!--TABLE_BODY-->', generateOrder(orders));
+                    res.send(html);
+                }
+            });
+        })
+        .catch(err => {
+            console.log(err);
+            res.status(500).send('Internal Server Error');
+        });
+};
+
+function generateOrder(orders) {
+    let html = '';
+    orders.forEach(order => {
+        order.products.forEach(product => {
+            html +=`
+                    <tr>
+                        <td>${order.id}</td>
+                        <td>${product.title}</td>
+                        <td>${product.orderItem.quantity}</td>
+                    </tr>`
+        })
+                    
+    });
+
+    return html;
+}
